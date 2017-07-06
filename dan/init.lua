@@ -13,7 +13,7 @@ tmr.alarm(1, 5000, 1, function()
         tmr.stop(1)
         print('IP is '..wifi.sta.getip())
     end
- end)
+end)
 
 
 port = 80
@@ -59,14 +59,15 @@ srv=net.createServer(net.TCP)
 srv:listen(80,function(conn) 
     conn:on("receive",function(conn,payload) 
     print(payload) 
-    conn:send("<body><div id='temp'><h1>Temperature in f: "..tostring(tf).."</h1><h1>Pressure: "..tostring(p)..
-    '</h1>'.."<h1> tmp36 sensor in f : "..
-    tostring(tmpf).."</h1></div>"..
-    "<script src='https://code.jquery.com/jquery-1.11.1.js'></script>"..
-    "<script type='text/javascript'>"..
-        "$( document ).ready(){"..
-            "setInterval($('#temp').load(location.href + ' #temp'), 1000);"..
-"}; </script></body>")
+--     conn:send("<body><div id='temp'><h1>Temperature in f: "..tostring(tf).."</h1><h1>Pressure: "..tostring(p)..
+--     '</h1>'.."<h1> tmp36 sensor in f : "..
+--     tostring(tmpf).."</h1></div>"..
+--     "<script src='https://code.jquery.com/jquery-1.11.1.js'></script>"..
+--     "<script type='text/javascript'>"..
+--         "$( document ).ready(){"..
+--             "setInterval($('#temp').load(location.href + ' #temp'), 1000);"..
+-- "}; </script></body>")
+    conn:send("nodemcu site")
     conn:close()
     end)
 end)
