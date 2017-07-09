@@ -46,7 +46,7 @@ function getData()
     data['pressure']=p
     --jsonData=sjson.encode(data)
    -- print(jsonData)
-    http.post('http://192.168.1.104',
+    http.post('http://192.168.1.104:3001/esp',
   'Content-Type: application/json\r\n',
   '{"hello":"world"}',
   function(code, data)
