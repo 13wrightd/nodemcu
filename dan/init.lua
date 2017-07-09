@@ -1,7 +1,9 @@
 OSS = 1 -- oversampling setting (0-3)
 SDA_PIN = 2 -- sda pin, GPIO2 ovvero il D2 (Bisogna metterlo qua)
 SCL_PIN = 3 -- scl pin, GPIO0 ovvero il D3
-
+data={}
+--sjson = require("json")
+--sjson = require('sjson')
 --
 wifi.setmode(wifi.STATION)
 wifi.sta.config('CCSAPT9206','ca239ca239')
@@ -37,6 +39,14 @@ function getData()
     tmpf=((tmpc*9)/5)+32
     print(tmpc)
     print(tmpf)
+    
+    data['temp']=tmpc
+    data['bmpTemp']=tf
+    data['pressure']=p
+ --   jsonData=sjson.encode(data)
+   -- print(jsonData)
+    
+    
     --print("Pressure: "..(p * 75 / 10000).."."..((p * 75 % 10000) / 1000).." mmHg")
 
 
@@ -67,7 +77,16 @@ srv:listen(80,function(conn)
 --         "$( document ).ready(){"..
 --             "setInterval($('#temp').load(location.href + ' #temp'), 1000);"..
 -- "}; </script></body>")
-    conn:send("nodemcu site")
+    --conn:send("Content-Type:application/json\n\n")
+    a='{\n"sup":5,\n"hey":"test"\n}'
+
+    conn:send("POST /logdata HTTP/1.1\r\n")
+    conn:send("Content-Type: application/json\r\n")
+    conn:send("Accept: application/json\r\n") 
+    conn:send("content-length:"..string.len(a).."\r\n")
+    conn:send("\r\n")
+    conn:send(a)
+
     conn:close()
     end)
 end)
