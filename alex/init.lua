@@ -6,12 +6,18 @@ print(wifi.sta.getmac())
 led=2 
 gpio.mode(led, gpio.OUTPUT)--D2 pin 
 
+function getData()
 V=adc.read(0)     --Vout from Lm19 temperature sensor
 a=(2.1962*1000000)+((1.8639-V)/(3.88*.0000001)) --converting Vout to temperature value lm19
 T=math.sqrt(a)-1481.96
 print(V)
 print(T)
 t=tostring(T) --to print value on html
+end 
+
+tmr.alarm(1, 2000, tmr.ALARM_AUTO, function()
+getData()
+end)
 
 if srv~=nil then
   srv:close()
@@ -41,9 +47,6 @@ conn:on("receive", function(client,request)
         elseif(_GET.pin == "OFF")then
             gpio.write(led, gpio.LOW);
         end
-        
-       
-        
         client:send(buf);
         client:close();
         collectgarbage();
