@@ -5,6 +5,7 @@ data={}
 --sjson = require("json")
 --sjson = require('sjson')
 --
+http = require("http")
 wifi.setmode(wifi.STATION)
 wifi.sta.config('CCSAPT9206','ca239ca239')
 wifi.sta.connect()
@@ -43,8 +44,18 @@ function getData()
     data['temp']=tmpc
     data['bmpTemp']=tf
     data['pressure']=p
- --   jsonData=sjson.encode(data)
+    --jsonData=sjson.encode(data)
    -- print(jsonData)
+    http.post('http://192.168.1.104',
+  'Content-Type: application/json\r\n',
+  '{"hello":"world"}',
+  function(code, data)
+    if (code < 0) then
+      print("HTTP request failed")
+    else
+      print(code, data)
+    end
+  end)
     
     
     --print("Pressure: "..(p * 75 / 10000).."."..((p * 75 % 10000) / 1000).." mmHg")
