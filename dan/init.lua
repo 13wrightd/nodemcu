@@ -3,7 +3,7 @@ SDA_PIN = 2 -- sda pin, GPIO2 ovvero il D2 (Bisogna metterlo qua)
 SCL_PIN = 3 -- scl pin, GPIO0 ovvero il D3
 data={}
 --sjson = require("json")
---sjson = require('sjson')
+sjson = require('sjson')
 --
 http = require("http")
 wifi.setmode(wifi.STATION)
@@ -34,21 +34,21 @@ function getData()
     
     tf=t*(9/5)+32
     print(p)
-    print(t)
-    print(val)
+    print(tf)
+   -- print(val)
     tmpc=(((val/1024.0)*3300)-500)*.01
     tmpf=((tmpc*9)/5)+32
-    print(tmpc)
+   -- print(tmpc)
     print(tmpf)
     
-    data['temp']=tmpc
+    data['temp']=tmpf
     data['bmpTemp']=tf
     data['pressure']=p
-    --jsonData=sjson.encode(data)
+    jsonData=sjson.encode(data)
    -- print(jsonData)
-    http.post('http://192.168.1.104:3001/esp',
+    http.post('http://192.168.1.113:3001/esp',
   'Content-Type: application/json\r\n',
-  '{"hello":"world"}',
+  jsonData,
   function(code, data)
     if (code < 0) then
       print("HTTP request failed")
@@ -89,15 +89,8 @@ srv:listen(80,function(conn)
 --             "setInterval($('#temp').load(location.href + ' #temp'), 1000);"..
 -- "}; </script></body>")
     --conn:send("Content-Type:application/json\n\n")
-    a='{\n"sup":5,\n"hey":"test"\n}'
-
-    conn:send("POST /logdata HTTP/1.1\r\n")
-    conn:send("Content-Type: application/json\r\n")
-    conn:send("Accept: application/json\r\n") 
-    conn:send("content-length:"..string.len(a).."\r\n")
-    conn:send("\r\n")
-    conn:send(a)
-
+    conn:send("nodemcu")
+    
     conn:close()
     end)
 end)
