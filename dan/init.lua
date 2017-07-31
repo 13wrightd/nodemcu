@@ -6,6 +6,7 @@ data={}
 sjson = require('sjson')
 --
 http = require("http")
+gpio.mode(6, gpio.OUTPUT)--D2 pin 
 wifi.setmode(wifi.STATION)
 wifi.sta.config('CCSAPT9206','ca239ca239')
 wifi.sta.connect()
@@ -18,12 +19,14 @@ tmr.alarm(1, 5000, 1, function()
     end
 end)
 
-
+gpio.write(6,gpio.HIGH)
 port = 80
 gpio.mode(1, gpio.OUTPUT)
 
 function getData()
     val = adc.read(0)
+  
+    print('val: '..tostring(val))
     bmp180 = require("bmp180")
     bmp180.init(SDA_PIN, SCL_PIN)
     bmp180.read(OSS)
@@ -33,20 +36,20 @@ function getData()
     
     
     tf=t*(9/5)+32
-    print(p)
-    print(tf)
+  --  print(p)
+    print('bmp: '..tostring(tf).. ' F')
    -- print(val)
     tmpc=(((val/1024.0)*3300)-500)*.01
     tmpf=((tmpc*9)/5)+32
    -- print(tmpc)
     print(tmpf)
-    
+   
     data['temp']=tmpf
     data['bmpTemp']=tf
     data['pressure']=p
     jsonData=sjson.encode(data)
    -- print(jsonData)
-    http.post('http://192.168.1.113:3001/esp',
+    http.post('http://192.168.1.104:3001/esp',
   'Content-Type: application/json\r\n',
   jsonData,
   function(code, data)
@@ -54,6 +57,17 @@ function getData()
       print("HTTP request failed")
     else
       print(code, data)
+ 
+      print(code)
+      data2=sjson.decode(data)
+      print(data2['relay'])
+      if(data2['relay']==1) then
+      
+        gpio.write(6,gpio.HIGH)
+ 
+      else
+       gpio.write(6,gpio.LOW)   
+      end
     end
   end)
     
@@ -66,11 +80,11 @@ function getData()
     --package.loaded["bmp180"]=nil 
 end
 --getData()
+
+--tmr.alarm(1, 1000, tmr.ALARM_AUTO,
 tmr.alarm(1, 2000, tmr.ALARM_AUTO, function()
 getData()
 end)
---tmr.alarm(1, 1000, tmr.ALARM_AUTO,
-
 
 
 if srv~=nil then
